@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('status');
             $table->string('payment_method');
 
+            
+
 
             $table->foreignUlid('user_id')->constrained();
             $table->foreignId('event_id')->constrained();

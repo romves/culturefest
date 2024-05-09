@@ -28,6 +28,11 @@ class Event extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function categories()
+    {
+        return $this->belongsToMany(EventCategory::class, 'event_category_mapping', 'event_id', 'event_category_id');
+    }
+
     public function participants()
     {
         return $this->belongsToMany(User::class, 'event_participants');

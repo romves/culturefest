@@ -20,12 +20,14 @@ function Index({ events }: PageProps<{ events: Event[] }>) {
         toast.success("Success Notification !");
     }
 
+    console.log(events)
+
     return (
         <PageLayout>
             <section className="container py-8">
                 <div className="flex flex-wrap gap-4">
                     {events.map((event) => (
-                        <EventCard event={event} />
+                        <EventCard event={event} key={event.id}/>
                     ))}
                 </div>
             </section>

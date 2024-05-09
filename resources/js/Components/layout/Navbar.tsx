@@ -64,7 +64,7 @@ export default function Navbar() {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 ) : (
-                    <Button>
+                    <Button variant='ghost'>
                         <Link href="/login" className="">
                             Login
                         </Link>

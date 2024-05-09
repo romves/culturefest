@@ -1,28 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\Controller;
 use App\Models\Event;
-use App\Http\Requests\StoreEventRequest;
-use App\Http\Requests\StoreOrderRequest;
-use App\Http\Requests\UpdateEventRequest;
 use App\Models\UploadedFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
 
-class EventController extends Controller
+class DashboardEventController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $events = Event::with('categories')->get();
+        $events = Event::all();
 
-        // return response()->json($events);
-        return Inertia::render('Events/Index', [
+        return Inertia::render('Dashboard/Events/Index', [
             'events' => $events,
         ]);
     }
@@ -121,22 +117,5 @@ class EventController extends Controller
     public function destroy(Event $event)
     {
         //
-    }
-
-    public function getParticipant()
-    {
-        try {
-
-            $event = new Event();
-
-            $participants = $event->participants();
-
-            return response()->json($participants);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'An error occurred while fetching participants.', 'error' =>
-                $th->getMessage()
-            ], 500);
-        }
     }
 }
