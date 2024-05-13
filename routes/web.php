@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', [EventController::class, 'index'])->name('index');
 
@@ -26,32 +27,30 @@ Route::prefix('dashboard')->middleware(['auth', 'role:event-organizer|admin'])->
         return Inertia::render('Dashboard');
     })->name('index');
 
-    Route::prefix('organizer')->middleware(['auth', 'role:event-organizer'])->name('organizer.')->group(function () {
-        Route::prefix('events')->name('events.')->group(function () {
-            Route::get('/', [DashboardEventController::class, 'index'])->name('index');
-            Route::get('/{event}', [DashboardEventController::class, 'show'])->name('show');
-            Route::get('/{event}/edit', [DashboardEventController::class, 'edit'])->name('edit');
-            Route::patch('/{event}', [DashboardEventController::class, 'update'])->name('update');
-            Route::delete('/{event}', [DashboardEventController::class, 'destroy'])->name('destroy');
-            Route::get('/create', [DashboardEventController::class, 'create'])->name('create');
-            Route::post('/', [DashboardEventController::class, 'store'])->name('store');
-        });
-
-        Route::prefix('tickets')->name('tickets.')->group(function () {
-            Route::get('/', [DashboardEventController::class, 'tickets'])->name('index');
-            Route::get('/{ticket}', [DashboardEventController::class, 'showTicket'])->name('show');
-            Route::get('/{ticket}/edit', [DashboardEventController::class, 'editTicket'])->name('edit');
-            Route::patch('/{ticket}', [DashboardEventController::class, 'updateTicket'])->name('update');
-            Route::delete('/{ticket}', [DashboardEventController::class, 'destroyTicket'])->name('destroy');
-            Route::get('/create', [DashboardEventController::class, 'createTicket'])->name('create');
-            Route::post('/', [DashboardEventController::class, 'storeTicket'])->name('store');
-        });
-
-        Route::prefix('orders')->name('orders.')->group(function () {
-            Route::get('/', [DashboardEventController::class, 'orders'])->name('index');
-            Route::get('/{order}', [DashboardEventController::class, 'showOrder'])->name('show');
-        });
+    Route::prefix('event')->name('event.')->group(function () {
+        Route::get('/', [DashboardEventController::class, 'index'])->name('index');
+        Route::get('/create', [DashboardEventController::class, 'create'])->name('create');
+        Route::get('/{event}', [DashboardEventController::class, 'show'])->name('show');
+        Route::get('/{event}/edit', [DashboardEventController::class, 'edit'])->name('edit');
+        Route::post('/', [DashboardEventController::class, 'store'])->name('store');
+        Route::patch('/{event}', [DashboardEventController::class, 'update'])->name('update');
+        Route::delete('/{event}', [DashboardEventController::class, 'destroy'])->name('destroy');
     });
+    Route::prefix('ticket')->name('ticket.')->group(function () {
+        Route::get('/', [DashboardEventController::class, 'tickets'])->name('index');
+        Route::get('/{ticket}', [DashboardEventController::class, 'showTicket'])->name('show');
+        Route::get('/{ticket}/edit', [DashboardEventController::class, 'editTicket'])->name('edit');
+        Route::patch('/{ticket}', [DashboardEventController::class, 'updateTicket'])->name('update');
+        Route::delete('/{ticket}', [DashboardEventController::class, 'destroyTicket'])->name('destroy');
+        Route::get('/create', [DashboardEventController::class, 'createTicket'])->name('create');
+        Route::post('/', [DashboardEventController::class, 'storeTicket'])->name('store');
+    });
+
+    Route::prefix('order')->name('order.')->group(function () {
+        Route::get('/', [DashboardEventController::class, 'orders'])->name('index');
+        Route::get('/{order}', [DashboardEventController::class, 'showOrder'])->name('show');
+    });
+
 
 
     Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->group(function () {

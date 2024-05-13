@@ -17,7 +17,7 @@ import EventCard from "@/Components/features/event/EventCard";
 
 function Index({ events }: PageProps<{ events: Event[] }>) {
     function toasters() {
-        toast.success("Success Notification !");
+
     }
 
     console.log(events)

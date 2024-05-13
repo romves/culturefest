@@ -9,6 +9,8 @@ class UploadedFile extends Model
 {
     use HasFactory;
 
+    protected $table = 'file_upload';
+
     protected $fillable = [
         'filename',
         'original_filename',
@@ -20,4 +22,6 @@ class UploadedFile extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+
 }

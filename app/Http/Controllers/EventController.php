@@ -21,7 +21,6 @@ class EventController extends Controller
     {
         $events = Event::with('categories')->get();
 
-        // return response()->json($events);
         return Inertia::render('Events/Index', [
             'events' => $events,
         ]);
@@ -40,51 +39,7 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            /** @var \App\Models\User  */
-            $user = Auth::user();
-            $user_id = $user->id;
-
-            if ($user->hasRole(['event-organizer', 'admin']) === false) {
-                return response()->json(['message' => 'You are not authorized to create events.'], 403);
-            }
-
-            $request->validate();
-            $uploadedFile = $request->file('image');
-
-            $fileName = hash('sha256', $uploadedFile->getClientOriginalName()) . '-' . time() . '.' . $uploadedFile->getClientOriginalExtension();
-            $filePath = $uploadedFile->storeAs('events/' . $request->name . '/file_uploads', $fileName);
-
-            $file = new UploadedFile();
-            $file->filename =
-                $file->original_filename = $uploadedFile->getClientOriginalName();
-            $file->file_path = $filePath;
-            $file->user_id = $user_id;
-            $file->save();
-
-            $event = new Event();
-            $event->user_id = $user_id;
-            $event->name = $request->input('name');
-            $event->description = $request->input('description');
-            $event->start_date = $request->input('start_date');
-            $event->end_date = $request->input('end_date');
-            $event->location = $request->input('location');
-            $event->max_participants = $request->input('max_participants');
-            $event->is_seated = $request->input('is_seated');
-            $event->image_url = $file->id;
-
-            $event->save();
-
-
-            return response()->json(['message' => 'Event created successfully!', 'event' => $event]);
-            // return redirect()->route('events.index');
-
-        } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'An error occurred while creating the event.', 'error' =>
-                $th->getMessage()
-            ], 500);
-        }
+      //
     }
 
     /**

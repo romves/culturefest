@@ -3,14 +3,15 @@ import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import { User } from "@/types";
 
 export default function Authenticated({
-    user,
     header,
     children,
-}: PropsWithChildren<{ user: User; header?: ReactNode }>) {
+}: PropsWithChildren<{ header?: ReactNode }>) {
+    const user = usePage().props.user as User;
+
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
@@ -34,15 +35,15 @@ export default function Authenticated({
                                     Dashboard
                                 </NavLink>
                                 <NavLink
-                                    href={route("dashboard.events.index")}
+                                    href={route("dashboard.event.index")}
                                     active={route().current(
-                                        "dashboard.events.index"
+                                        "dashboard.event.index"
                                     )}
                                 >
                                     Event
                                 </NavLink>
                                 <NavLink
-                                    href={route("dashboard.events.index")}
+                                    href={route("dashboard.event.index")}
                                     active={route().current(
                                         "dashboard.order.index"
                                     )}
