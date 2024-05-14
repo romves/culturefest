@@ -66,7 +66,7 @@ const EventPage = ({
                                         event.image_url
                                     }
                                     alt="event image"
-                                    className="rounded-md w-[10rem] aspect-video object-cover"
+                                    className="rounded-md w-[10rem] aspect-video object-contain bg-slate-400/40"
                                 />
                             </TableCell>
                             <TableCell className="w-[20%]">
@@ -109,8 +109,10 @@ const EventPage = ({
                             <TableCell>
                                 <Chip variant="success" text={event.status} />
                             </TableCell>
-                            <TableCell className="space-x-2">
-                                <Button variant="warn">Edit</Button>
+                            <TableCell className="space-x-1">
+                                <Link href={route("dashboard.event.edit", event.id)}
+                                    className={buttonVariants()}
+                                >Edit</Link>
                                 <Button
                                     onClick={() => deleteEvent(event.id)}
                                     variant="destructive"

@@ -111,7 +111,11 @@ class DashboardEventController extends Controller
      */
     public function edit(Event $event)
     {
-        //
+        $event = Event::find($event->id);
+
+        return Inertia::render('Dashboard/Events/Edit', [
+            'event' => $event,
+        ]);
     }
 
     /**
@@ -121,7 +125,8 @@ class DashboardEventController extends Controller
     {
         $event->update($request->all());
 
-        return response()->json(['message' => 'Event updated successfully!', 'event' => $event]);
+        // return response()->json(['message' => 'Event updated successfully!', 'event' => $event]);
+        return redirect()->route('dashboard.event.index')->with('message', 'Event updated successfully!');  
     }
 
     /**
