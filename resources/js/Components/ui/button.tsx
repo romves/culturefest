@@ -9,7 +9,7 @@ const buttonVariants = cva(
     {
         variants: {
             variant: {
-                warn: "bg-teal-500 text-primary-foreground hover:bg-teal-500/90",
+                info: "bg-teal-500 text-primary-foreground hover:bg-teal-500/90",
                 success:
                     "bg-success text-success-foreground hover:bg-success/90",
                 default:

@@ -107,12 +107,20 @@ const EventPage = ({
                                 )}
                             </TableCell>
                             <TableCell>
-                                <Chip variant="success" text={event.status} />
+                                <Chip variant={`${event.status.toLowerCase()}`} text={event.status} />
                             </TableCell>
                             <TableCell className="space-x-1">
-                                <Link href={route("dashboard.event.edit", event.id)}
-                                    className={buttonVariants()}
-                                >Edit</Link>
+                                <Link
+                                    href={route(
+                                        "dashboard.event.edit",
+                                        event.id
+                                    )}
+                                    className={buttonVariants({
+                                        variant: "info",
+                                    })}
+                                >
+                                    Edit
+                                </Link>
                                 <Button
                                     onClick={() => deleteEvent(event.id)}
                                     variant="destructive"
