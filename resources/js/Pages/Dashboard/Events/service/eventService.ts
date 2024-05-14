@@ -11,3 +11,29 @@ export function deleteEvent(eventId: number) {
         },
     });
 }
+
+export function createEvent(payload: Record<string, any>) {
+    router.post(route("dashboard.event.store"), payload, {
+        onError: () => {
+            toast.error("Failed to create event");
+        },
+        onSuccess: () => {
+            toast.success("Event created successfully");
+        },
+    });
+}
+
+export function updateEvent(eventId: number, payload: Record<string, any>) {
+    router.patch(
+        route("dashboard.event.update", eventId),
+        { _method: "put", ...payload },
+        {
+            onError: () => {
+                toast.error("Failed to update event");
+            },
+            onSuccess: () => {
+                toast.success("Event updated successfully");
+            },
+        }
+    );
+}

@@ -1,22 +1,21 @@
 import TextInput from "@/Components/TextInput";
 import { Button } from "@/Components/ui/button";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { PageProps } from "@/types";
-import { router, useForm } from "@inertiajs/react";
-import { ChangeEvent } from "react";
-import { toast } from "react-toastify";
-import { createEvent } from "./service/eventService";
+import { useForm } from "@inertiajs/react";
+import React, { ChangeEvent } from "react";
 import { IFormData } from "./types";
+import { Event } from "@/types/common";
+import { updateEvent } from "./service/eventService";
 
-const Create = ({}: PageProps) => {
+const Edit = ({ event }: { event: Event }) => {
     const { data, setData } = useForm<IFormData>({
-        name: "",
-        description: "",
-        start_date: "",
-        end_date: "",
-        location: "",
-        max_participants: "",
-        is_seated: "",
+        name: event.name ?? "",
+        description: event.description ?? "",
+        start_date: event.start_date ?? "",
+        end_date: event.end_date ?? "",
+        location: event.location ?? "",
+        max_participants: event.max_participants ?? "",
+        is_seated: event.is_seated ?? "",
         image: undefined,
     });
 
@@ -39,7 +38,7 @@ const Create = ({}: PageProps) => {
                     className="grid gap-2"
                     onSubmit={(e) => {
                         e.preventDefault();
-                        createEvent(data);
+                        updateEvent(event.id, data);
                     }}
                 >
                     <TextInput
@@ -101,11 +100,19 @@ const Create = ({}: PageProps) => {
                         }}
                     />
 
-                    <Button type="submit">Submit</Button>
+                    <div className="flex gap-2">
+                        <img
+                            src={window.location.origin + "/" + event.image_url}
+                            alt="event image"
+                            className="rounded-md w-[10rem] aspect-video object-contain bg-slate-400/40"
+                        />
+                    </div>
+
+                    <Button type="submit">Update</Button>
                 </form>
             </div>
         </AuthenticatedLayout>
     );
 };
 
-export default Create;
+export default Edit;
