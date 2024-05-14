@@ -12,7 +12,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { formatDate } from "@/lib/utils";
 import { PageProps, User } from "@/types";
 import { Event } from "@/types/common";
-import { CircleCheck, CircleX } from "lucide-react";
+import { CircleCheck, CircleX, EllipsisVertical } from "lucide-react";
 import { deleteEvent } from "./service/eventService";
 import { Link } from "@inertiajs/react";
 
@@ -51,6 +51,7 @@ const EventPage = ({
                         <TableHead>Seated</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Action</TableHead>
+                        <TableHead></TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -108,7 +109,7 @@ const EventPage = ({
                             <TableCell>
                                 <Chip variant="success" text={event.status} />
                             </TableCell>
-                            <TableCell className="space-x-1">
+                            <TableCell className="space-x-2">
                                 <Button variant="warn">Edit</Button>
                                 <Button
                                     onClick={() => deleteEvent(event.id)}
@@ -116,6 +117,11 @@ const EventPage = ({
                                 >
                                     Delete
                                 </Button>
+                            </TableCell>
+                            <TableCell className="flex items-center h-full space-x-1">
+                                <button>
+                                    <EllipsisVertical size={22} />
+                                </button>
                             </TableCell>
                         </TableRow>
                     ))}

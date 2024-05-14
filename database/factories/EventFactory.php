@@ -24,9 +24,8 @@ class EventFactory extends Factory
             'end_date' => $this->faker->dateTimeBetween('+1 month', '+2 months'),
             'location' => $this->faker->address,
             'image_url' => $this->faker->imageUrl(),
-            'max_participants' => $this->faker->numberBetween(1, 100),
+            'max_participants' => $this->faker->numberBetween(50, 1200),
             'is_available' => $this->faker->boolean,
-            'is_seated' => $this->faker->boolean,
         ];
     }
 }

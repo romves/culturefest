@@ -13,9 +13,9 @@ class TicketTypeSeeder extends Seeder
     public function run(): void
     {
         $ticketTypes = [
-            ['name' => 'Regular', 'price' => 100000],
-            ['name' => 'VIP', 'price' => 200000],
-            ['name' => 'VVIP', 'price' => 300000],
+            ['name' => 'Regular', 'price' => 100000, 'is_seated' => false, 'max_tickets' => 800],
+            ['name' => 'VIP', 'price' => 200000, 'is_seated' => false, 'max_tickets' => 800],
+            ['name' => 'VVIP', 'price' => 300000, 'is_seated' => false, 'max_tickets' => 800],
         ];
 
         foreach ($ticketTypes as $ticketType) {

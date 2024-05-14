@@ -44,8 +44,6 @@ class DashboardEventController extends Controller
                 'start_date' => 'required|date',
                 'end_date' => 'required|date',
                 'location' => 'required|string',
-                'max_participants' => 'required|integer',
-                'is_seated' => 'required|boolean',
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
 
@@ -78,7 +76,6 @@ class DashboardEventController extends Controller
             $event->end_date = $request->end_date;
             $event->location = $request->location;
             $event->max_participants = $request->max_participants;
-            $event->is_seated = $request->is_seated;
             $event->image_url = $file->file_path;
             $event->save();
 

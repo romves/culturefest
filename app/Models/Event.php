@@ -45,16 +45,7 @@ class Event extends Model
 
     public function ticketTypes()
     {
-        return $this->belongsToMany(TicketType::class)->withPivot('price');
+        return $this->hasMany(TicketType::class);
     }
 
-    public function isParticipant($userId)
-    {
-        return $this->participants()->where('user_id', $userId)->exists();
-    }
-
-    public function isOwner($userId)
-    {
-        return $this->user_id === $userId;
-    }
 }
