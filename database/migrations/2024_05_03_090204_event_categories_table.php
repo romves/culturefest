@@ -21,10 +21,9 @@ return new class extends Migration
         );
 
         Schema::create('event_category_mapping', function (Blueprint $table) {
-            $table->id();
+            $table->primary(['event_id', 'event_category_id']);
             $table->foreignId('event_id')->constrained()->onDelete('cascade');
             $table->foreignId('event_category_id')->constrained()->onDelete('cascade');
-            $table->timestamps();
         });
     }
 

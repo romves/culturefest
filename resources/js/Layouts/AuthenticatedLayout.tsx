@@ -43,12 +43,12 @@ export default function Authenticated({
                                     Event
                                 </NavLink>
                                 <NavLink
-                                    href={route("dashboard.event.index")}
+                                    href={route("dashboard.orders.index")}
                                     active={route().current(
                                         "dashboard.order.index"
                                     )}
                                 >
-                                    Recent Order
+                                    Order
                                 </NavLink>
                                 {/* <NavLink href={route('dashboard.index')} active={route().current('dashboard.index')}>
                                     Dashboard

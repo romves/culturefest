@@ -38,6 +38,16 @@ class Event extends Model
         return $this->belongsToMany(User::class, 'event_participants');
     }
 
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
+    public function ticketTypes()
+    {
+        return $this->belongsToMany(TicketType::class)->withPivot('price');
+    }
+
     public function isParticipant($userId)
     {
         return $this->participants()->where('user_id', $userId)->exists();

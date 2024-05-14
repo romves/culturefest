@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Dashboard\DashboardEventController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -11,10 +12,12 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 Route::get('/', [EventController::class, 'index'])->name('index');
 
 Route::prefix('event')->name('user.event.')->group(function () {
+    Route::post('/create', [EventController::class, 'store'])->name('store');
     Route::get('/{event}', [EventController::class, 'show'])->name('show');
 
-    Route::get('/{event}/tickets', [EventController::class, 'tickets'])->name('tickets');
-    Route::post('/{event}/tickets/order', [EventController::class, 'orderTickets'])->name('orderTickets');
+
+    Route::get('/{event_slug}/tickets', [EventController::class, 'tickets'])->name('tickets');
+    Route::post('/{event_slug}/tickets/order', [OrderController::class, 'orderTickets'])->name('orderTickets');
 });
 
 Route::prefix('payment')->name('payment.')->group(function () {
@@ -46,6 +49,13 @@ Route::prefix('dashboard')->middleware(['auth', 'role:event-organizer|admin'])->
         Route::post('/', [DashboardEventController::class, 'storeTicket'])->name('store');
     });
 
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', [DashboardEventController::class, 'orders'])->name('index');
+        Route::get('/{order}', [DashboardEventController::class, 'showOrder'])->name('show');
+    });
+
+    //     Route::prefix('organizer')->middleware(['auth', 'role:event-organizer'])->name('organizer.')->group(function () {
+    // });
     Route::prefix('order')->name('order.')->group(function () {
         Route::get('/', [DashboardEventController::class, 'orders'])->name('index');
         Route::get('/{order}', [DashboardEventController::class, 'showOrder'])->name('show');

@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('tickets', function (Blueprint $table) {
             $table->id();
-            $table->string('status')->default('pending');
-            $table->string('payment_method');
-            $table->string('total_price');
-            $table->string('order_code')->unique();
-
+            $table->string('ticket_code', 255)->unique();
             $table->foreignUlid('user_id')->constrained();
+            $table->foreignId('event_id')->constrained();
+            $table->foreignId('order_id')->constrained();
+            $table->foreignId('ticket_type_id')->constrained(
+                'ticket_types',
+                'id'
+            );
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('order');
+        Schema::dropIfExists('tickets');
     }
 };
