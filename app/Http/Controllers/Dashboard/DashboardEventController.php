@@ -78,7 +78,6 @@ class DashboardEventController extends Controller
             $event->end_date = $request->end_date;
             $event->location = $request->location;
             $event->max_participants = $request->max_participants;
-            $event->is_available = $request->is_available;
             $event->is_seated = $request->is_seated;
             $event->image_url = $file->file_path;
             $event->save();
