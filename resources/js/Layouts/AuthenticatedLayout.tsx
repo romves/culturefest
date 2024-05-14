@@ -6,6 +6,24 @@ import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link, usePage } from "@inertiajs/react";
 import { User } from "@/types";
 
+const links = [
+    {
+        href: route("dashboard.index"),
+        active: route().current("dashboard.index"),
+        text: "Dashboard",
+    },
+    {
+        href: route("dashboard.event.index"),
+        active: route().current("dashboard.event.index"),
+        text: "Event",
+    },
+    {
+        href: route("dashboard.orders.index"),
+        active: route().current("dashboard.order.index"),
+        text: "Order",
+    },
+];
+
 export default function Authenticated({
     header,
     children,
@@ -28,28 +46,16 @@ export default function Authenticated({
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route("dashboard.index")}
-                                    active={route().current("dashboard.index")}
-                                >
-                                    Dashboard
-                                </NavLink>
-                                <NavLink
-                                    href={route("dashboard.event.index")}
-                                    active={route().current(
-                                        "dashboard.event.index"
-                                    )}
-                                >
-                                    Event
-                                </NavLink>
-                                <NavLink
-                                    href={route("dashboard.orders.index")}
-                                    active={route().current(
-                                        "dashboard.order.index"
-                                    )}
-                                >
-                                    Order
-                                </NavLink>
+                                {links.map((link) => (
+                                    <NavLink
+                                        key={link.href}
+                                        href={link.href}
+                                        active={link.active}
+                                    >
+                                        {link.text}
+                                    </NavLink>
+                                ))}
+                               
                                 {/* <NavLink href={route('dashboard.index')} active={route().current('dashboard.index')}>
                                     Dashboard
                                 </NavLink> */}

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Models\EventCategory;
 use App\Models\UploadedFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -109,10 +110,12 @@ class DashboardEventController extends Controller
      */
     public function edit(Event $event)
     {
+        $categories = EventCategory::all();
         $event = Event::with(['ticketTypes', 'categories'])->find($event->id);
 
         return Inertia::render('Dashboard/Events/Edit', [
             'event' => $event,
+            'event_categories' => $categories,
         ]);
     }
 

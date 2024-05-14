@@ -1,3 +1,5 @@
+import { Category } from "@/types/common";
+
 export interface IFormData extends Record<string, any> {
     name: string;
     description: string;
@@ -7,4 +9,6 @@ export interface IFormData extends Record<string, any> {
     max_participants: number | string;
     is_seated: number | string;
     image: File | undefined;
+
+    categories?: Category[] | [] ;
 }

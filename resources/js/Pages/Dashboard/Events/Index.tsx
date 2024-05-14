@@ -51,7 +51,6 @@ const EventPage = ({
                         <TableHead>Seated</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead>Action</TableHead>
-                        <TableHead></TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -107,9 +106,12 @@ const EventPage = ({
                                 )}
                             </TableCell>
                             <TableCell>
-                                <Chip variant={`${event.status.toLowerCase()}`} text={event.status} />
+                                <Chip
+                                    variant={`${event.status.toLowerCase()}`}
+                                    text={event.status}
+                                />
                             </TableCell>
-                            <TableCell className="space-x-1">
+                            <TableCell className="flex items-center h-full gap-1">
                                 <Link
                                     href={route(
                                         "dashboard.event.edit",
@@ -127,9 +129,7 @@ const EventPage = ({
                                 >
                                     Delete
                                 </Button>
-                            </TableCell>
-                            <TableCell className="flex items-center h-full space-x-1">
-                                <button>
+                                <button className="p-1">
                                     <EllipsisVertical size={22} />
                                 </button>
                             </TableCell>
