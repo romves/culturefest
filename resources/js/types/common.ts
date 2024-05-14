@@ -11,6 +11,20 @@ export interface Event {
     is_available: number;
     is_seated: number;
     status: string;
+    categories: Category[];
+    ticket_types: TicketType[];
+}
+
+export interface Category {
+    id: number;
+    name: string;
+    slug: string;
+}
+
+export interface TicketType {
+    id: number;
+    name: string;
+    price: number;
 }
 
 export enum EventStatus {

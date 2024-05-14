@@ -9,7 +9,7 @@ import { createEvent } from "./service/eventService";
 import { IFormData } from "./types";
 
 const Create = ({}: PageProps) => {
-    const { data, setData } = useForm<IFormData>({
+    const { data, setData, errors } = useForm<IFormData>({
         name: "",
         description: "",
         start_date: "",
@@ -19,6 +19,7 @@ const Create = ({}: PageProps) => {
         is_seated: "",
         image: undefined,
     });
+
 
     function onChange(e: React.ChangeEvent<HTMLInputElement>) {
         setData(e.target.name as any, e.target.value);
@@ -46,12 +47,14 @@ const Create = ({}: PageProps) => {
                         name="name"
                         label="Name"
                         value={data.name}
+                        error={errors.name}
                         onChange={onChange}
                     />
                     <TextInput
                         name="description"
                         label="Description"
                         value={data.description}
+                        error={errors.description}
                         onChange={onChange}
                     />
 
@@ -60,6 +63,7 @@ const Create = ({}: PageProps) => {
                         label="Start Date"
                         type="datetime-local"
                         value={data.start_date}
+                        error={errors.start_date}
                         onChange={onChange}
                     />
 
@@ -68,6 +72,7 @@ const Create = ({}: PageProps) => {
                         label="End Date"
                         type="datetime-local"
                         value={data.end_date}
+                        error={errors.end_date}
                         onChange={onChange}
                     />
 
@@ -75,6 +80,7 @@ const Create = ({}: PageProps) => {
                         name="location"
                         label="Location"
                         value={data.location}
+                        error={errors.location}
                         onChange={onChange}
                     />
 
@@ -82,6 +88,7 @@ const Create = ({}: PageProps) => {
                         name="max_participants"
                         label="Max Participant"
                         value={data.max_participants}
+                        error={errors.max_participants}
                         onChange={onChange}
                     />
 
@@ -89,6 +96,7 @@ const Create = ({}: PageProps) => {
                         name="is_seated"
                         label="Is Seated"
                         value={data.is_seated}
+                        error={errors.is_seated}
                         onChange={onChange}
                     />
 

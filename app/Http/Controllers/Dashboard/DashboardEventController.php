@@ -60,8 +60,6 @@ class DashboardEventController extends Controller
             $fileName = hash('sha256', $uploadedFile->getClientOriginalName()) . '-' . time() . '.' . $uploadedFile->getClientOriginalExtension();
             $filePath = $uploadedFile->storeAs('events/' . $request->name . '/file_uploads', $fileName);
 
-            // return asset('storage/' . $filePath);
-
             $file = new UploadedFile();
             $event = new Event();
 
@@ -111,7 +109,7 @@ class DashboardEventController extends Controller
      */
     public function edit(Event $event)
     {
-        $event = Event::find($event->id);
+        $event = Event::with(['ticketTypes', 'categories'])->find($event->id);
 
         return Inertia::render('Dashboard/Events/Edit', [
             'event' => $event,
@@ -126,7 +124,7 @@ class DashboardEventController extends Controller
         $event->update($request->all());
 
         // return response()->json(['message' => 'Event updated successfully!', 'event' => $event]);
-        return redirect()->route('dashboard.event.index')->with('message', 'Event updated successfully!');  
+        return redirect()->route('dashboard.event.index')->with('message', 'Event updated successfully!');
     }
 
     /**
