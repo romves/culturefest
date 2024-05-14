@@ -1,19 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/Components/ui/card";
-import { Event } from "@/types/common";
-import { PageProps } from "@/types";
-import { toast } from "react-toastify";
-import { formatDate } from "@/lib/utils";
-import { Link } from "@inertiajs/react";
-import PageLayout from "@/Layouts/PageLayout";
 import EventCard from "@/Components/features/event/EventCard";
+import PageLayout from "@/Layouts/PageLayout";
+import { PageProps } from "@/types";
+import { Event } from "@/types/common";
+import { toast } from "react-toastify";
 
 function Index({ events }: PageProps<{ events: Event[] }>) {
     function toasters() {

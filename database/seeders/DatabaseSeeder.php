@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RoleSeeder::class);
         $this->call(EventCategorySeeder::class);
+        $this->call(TicketTypeSeeder::class);
 
         $user = User::factory()->create([
             'name' => 'Test User',

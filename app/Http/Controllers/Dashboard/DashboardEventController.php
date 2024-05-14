@@ -53,7 +53,7 @@ class DashboardEventController extends Controller
             $user = Auth::user();
             $user_id = $user->id;
 
-            if ($user->hasRole(['event-organizer', 'admin']) === false) {
+            if (!$user || $user->hasRole(['event-organizer', 'admin']) === false) {
                 return response()->json(['message' => 'You are not authorized to create events.'], 403);
             }
 
@@ -71,14 +71,14 @@ class DashboardEventController extends Controller
             $file->file_path = 'storage/' . $filePath;
 
             $event->user_id = $user_id;
-            $event->name = $request->input('name');
-            $event->slug = Str::slug($request->input('name'));
-            $event->description = $request->input('description');
-            $event->start_date = $request->input('start_date');
-            $event->end_date = $request->input('end_date');
-            $event->location = $request->input('location');
-            $event->max_participants = $request->input('max_participants');
-            $event->is_seated = $request->input('is_seated');
+            $event->name = $request->name;
+            $event->slug = Str::slug($request->name);
+            $event->description = $request->description;
+            $event->start_date = $request->start_date;
+            $event->end_date = $request->end_date;
+            $event->location = $request->location;
+            $event->max_participants = $request->max_participants;
+            $event->is_seated = $request->is_seated;
             $event->image_url = $file->file_path;
             $event->save();
 
