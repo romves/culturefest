@@ -1,19 +1,25 @@
 import TextInput from "@/Components/TextInput";
 import { Button } from "@/Components/ui/button";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHeader,
+    TableRow,
+} from "@/Components/ui/table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { numberFormat } from "@/lib/utils";
 import { Category, Event } from "@/types/common";
-import { useForm } from "@inertiajs/react";
-import { ChangeEvent, PropsWithChildren, useState } from "react";
-import { updateEvent } from "./service/eventService";
+import { router, useForm } from "@inertiajs/react";
+import { EllipsisVertical, X } from "lucide-react";
+import { ChangeEvent, PropsWithChildren, ReactNode, useState } from "react";
+import { deleteImagebyId, updateEvent } from "./service/eventService";
 import { IFormData } from "./types";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Components/ui/select";
-import { Check } from "lucide-react";
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/Components/ui/popover";
 
 const Edit = ({
     event,
@@ -30,7 +36,8 @@ const Edit = ({
         location: event.location ?? "",
         max_participants: event.max_participants ?? "",
         is_seated: event.is_seated ?? "",
-        image: undefined,
+        images_server: event.images_server,
+        images: null,
 
         categories: event.categories,
     });
@@ -38,8 +45,6 @@ const Edit = ({
     function onChange(e: ChangeEvent<HTMLInputElement>) {
         setData(e.target.name as any, e.target.value);
     }
-
-    console.log(event);
 
     return (
         <AuthenticatedLayout
@@ -51,13 +56,18 @@ const Edit = ({
                 </div>
             }
         >
-            <div className="container grid grid-cols-2 gap-2 py-8">
+            <div className="container grid grid-cols-2 gap-4 py-8">
                 <FormSection title="Event Details">
                     <form
                         className="grid gap-2"
                         onSubmit={(e) => {
                             e.preventDefault();
-                            updateEvent(event.id, data);
+                            updateEvent(event.id, {
+                                ...data,
+                                categories: data.categories.map(
+                                    (category: Category) => category.id
+                                ),
+                            });
                         }}
                     >
                         <TextInput
@@ -75,7 +85,7 @@ const Edit = ({
                             onChange={onChange}
                         />
 
-                        <div className="flex w-full gap-2 ">
+                        <div className="flex w-full gap-4 ">
                             <TextInput
                                 className="w-full"
                                 name="start_date"
@@ -122,31 +132,54 @@ const Edit = ({
                         />
 
                         <input
-                            name="image"
+                            name="images"
                             type="file"
                             accept="image/*"
+                            multiple
                             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setData("image", e.target.files?.[0]);
+                                setData("images", e.target.files);
                             }}
                         />
 
-                        <div className="flex gap-2">
-                            <img
-                                src={
-                                    window.location.origin +
-                                    "/" +
-                                    event.image_url
-                                }
-                                alt="event image"
-                                className="rounded-md w-[10rem] aspect-video object-contain bg-slate-400/40"
-                            />
+                        <div className="flex gap-4">
+                            {data.images_server?.map((image: any) => (
+                                <div className="relative group">
+                                    <img
+                                        key={image.id}
+                                        src={
+                                            window.location.origin +
+                                            "/" +
+                                            image.file_path
+                                        }
+                                        alt="event image"
+                                        className="rounded-md w-[10rem] aspect-video object-contain bg-slate-400/40"
+                                    />
+
+                                    <button
+                                        type="button"
+                                        className="absolute transition-all opacity-0 top-1 right-1 group-hover:opacity-100"
+                                        onClick={() => {
+                                            deleteImagebyId(image.id);
+                                            setData(
+                                                "images_server",
+                                                data.images_server?.filter(
+                                                    (img: any) =>
+                                                        img.id !== image.id
+                                                )
+                                            );
+                                        }}
+                                    >
+                                        <X size={20} />
+                                    </button>
+                                </div>
+                            ))}
                         </div>
 
                         <Button type="submit">Update</Button>
                     </form>
                 </FormSection>
 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-4">
                     <FormSection title="Event Categories">
                         <MultiSelect
                             options={event_categories.map((category) => ({
@@ -180,13 +213,72 @@ const Edit = ({
                             }}
                         />
                     </FormSection>
-                    <FormSection title="Ticket Type">
-                        {event.ticket_types.map((ticket) => (
-                            <div key={ticket.id}>
-                                <h3>{ticket.name}</h3>
-                                <p>{ticket.price}</p>
-                            </div>
-                        ))}
+                    <FormSection
+                        title="Ticket Type"
+                        action={
+                            <Button
+                                size="sm"
+                                onClick={() =>
+                                    router.visit(
+                                        route(
+                                            "dashboard.ticket.create",
+                                            event.id
+                                        )
+                                    )
+                                }
+                            >
+                                Add
+                            </Button>
+                        }
+                    >
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableCell>Name</TableCell>
+                                    <TableCell>Price</TableCell>
+                                    <TableCell>Action</TableCell>
+                                </TableRow>
+                            </TableHeader>
+
+                            <TableBody>
+                                {event.ticket_types.map((ticket) => (
+                                    <TableRow key={ticket.id}>
+                                        <TableCell className="font-medium">
+                                            {ticket.name}
+                                        </TableCell>
+                                        <TableCell className="w-[10%] text-sm font-medium">
+                                            {numberFormat(ticket.price)}
+                                        </TableCell>
+                                        <TableCell className="w-[10%] text-sm font-medium">
+                                            <Popover>
+                                                <PopoverTrigger>
+                                                    <EllipsisVertical
+                                                        size={22}
+                                                    />
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-fit">
+                                                    <div className="grid gap-1">
+                                                        <Button
+                                                            size="sm"
+                                                            variant="ghost"
+                                                        >
+                                                            Edit
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="ghost"
+                                                            className="text-red-500 hover:text-red-600"
+                                                        >
+                                                            Delete
+                                                        </Button>
+                                                    </div>
+                                                </PopoverContent>
+                                            </Popover>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
                     </FormSection>
                 </div>
             </div>
@@ -199,10 +291,14 @@ export default Edit;
 const FormSection = ({
     title,
     children,
-}: PropsWithChildren<{ title: string }>) => {
+    action,
+}: PropsWithChildren<{ title: string; action?: ReactNode }>) => {
     return (
         <div className="p-4 bg-white rounded-xl">
-            <h2 className="mb-4 text-lg font-semibold">{title}</h2>
+            <div className="flex justify-between">
+                <h2 className="mb-6 text-lg font-semibold">{title}</h2>
+                {action}
+            </div>
             {children}
         </div>
     );

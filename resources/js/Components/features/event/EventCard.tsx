@@ -38,7 +38,8 @@ export default function EventCard({ event }: { event: Event }) {
                             {event.max_participants}{" "}
                             <Users size="14" strokeWidth={2.5} />{" "}
                             <span className="flex items-center gap-1 ml-2 text-red-400 animate-pulse">
-                                2 tickets left <Ticket size="14" strokeWidth={2.5} />
+                                2 tickets left{" "}
+                                <Ticket size="14" strokeWidth={2.5} />
                             </span>
                         </p>
                         <p className="font-medium">
@@ -48,29 +49,19 @@ export default function EventCard({ event }: { event: Event }) {
                     </div>
 
                     <div className="flex gap-1">
-                        <span className="px-2 text-xs font-medium border rounded-full text-violet-500 border-violet-500">
-                            Jawa
-                        </span>
-                        <span className="px-2 text-xs font-medium border rounded-full text-violet-500 border-violet-500">
-                            Musik
-                        </span>
-                        <span className="px-2 text-xs font-medium border rounded-full text-violet-500 border-violet-500">
-                            Modern
-                        </span>
+                        {event.categories.map((category) => (
+                            <span
+                                key={category.id}
+                                className="px-2 text-xs font-medium border rounded-full text-violet-500 border-violet-500"
+                            >
+                                {category.name}
+                            </span>
+                        ))}
                     </div>
 
                     <span className="absolute px-2 text-sm font-semibold text-orange-500 bg-orange-100 rounded right-2 top-1">
                         Closed
                     </span>
-                    {/* <div className="flex gap-2">
-
-                            <span className="px-4 text-green-500 bg-green-100 rounded">
-                                Test
-                            </span>
-                            <span className="px-4 text-yellow-500 bg-yellow-100 rounded">
-                                Test
-                            </span>
-                        </div> */}
                 </CardContent>
             </Link>
         </Card>

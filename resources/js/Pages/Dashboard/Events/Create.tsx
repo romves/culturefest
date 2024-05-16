@@ -17,7 +17,7 @@ const Create = ({}: PageProps) => {
         location: "",
         max_participants: "",
         is_seated: "",
-        image: undefined,
+        images: null,
     });
 
 
@@ -104,8 +104,9 @@ const Create = ({}: PageProps) => {
                         name="image"
                         type="file"
                         accept="image/*"
+                        multiple
                         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                            setData("image", e.target.files?.[0]);
+                            setData("images", e.target.files);
                         }}
                     />
 

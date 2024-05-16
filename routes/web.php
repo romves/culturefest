@@ -38,6 +38,7 @@ Route::prefix('dashboard')->middleware(['auth', 'role:event-organizer|admin'])->
         Route::post('/', [DashboardEventController::class, 'store'])->name('store');
         Route::patch('/{event}', [DashboardEventController::class, 'update'])->name('update');
         Route::delete('/{event}', [DashboardEventController::class, 'destroy'])->name('destroy');
+        Route::delete('/image/{image}', [DashboardEventController::class, 'deleteImage'])->name('deleteImage');
     });
     Route::prefix('ticket')->name('ticket.')->group(function () {
         Route::get('/', [DashboardEventController::class, 'tickets'])->name('index');

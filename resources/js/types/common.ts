@@ -3,7 +3,6 @@ export interface Event {
     name: string;
     description: string;
     slug: string;
-    image_url: string;
     location: string;
     start_date: string;
     end_date: string;
@@ -12,7 +11,9 @@ export interface Event {
     is_seated: number;
     status: string;
     categories: Category[];
+    images: FileList | null;
     ticket_types: TicketType[];
+    images_server: ServerImage[];
 }
 
 export interface Category {
@@ -27,9 +28,15 @@ export interface TicketType {
 }
 
 export enum EventStatus {
-    PENDING = 'pending',
-    APPROVED = 'approved',
-    REJECTED = 'rejected',
-    CANCELED = 'canceled',
-    COMPLETED = 'completed',
+    PENDING = "pending",
+    APPROVED = "approved",
+    REJECTED = "rejected",
+    CANCELED = "canceled",
+    COMPLETED = "completed",
+}
+
+export interface ServerImage {
+    id: number;
+    file_path: string;
+    filename: string;
 }

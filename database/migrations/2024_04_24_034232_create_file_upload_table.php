@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('filename');
             $table->string('original_filename');
+            $table->enum('type', ['image', 'video', 'document']);
             $table->string('file_path');
 
             // $table->foreignId('user_id')->constrained();

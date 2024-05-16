@@ -15,7 +15,6 @@ class Event extends Model
         'start_date',
         'end_date',
         'location',
-        'image',
         'max_participants',
         'status',
         'is_available',
@@ -46,6 +45,11 @@ class Event extends Model
     public function ticketTypes()
     {
         return $this->hasMany(TicketType::class);
+    }
+
+    public function images_server()
+    {
+        return $this->hasMany(UploadedFile::class, 'event_id');
     }
 
 }

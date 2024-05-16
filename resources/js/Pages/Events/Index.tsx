@@ -5,9 +5,6 @@ import { Event } from "@/types/common";
 import { toast } from "react-toastify";
 
 function Index({ events }: PageProps<{ events: Event[] }>) {
-    function toasters() {
-
-    }
 
     console.log(events)
 

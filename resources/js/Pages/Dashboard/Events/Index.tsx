@@ -54,18 +54,18 @@ const EventPage = ({
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {events.map((event, index) => (
+                    {(events ?? []).map((event, index) => (
                         <TableRow key={event.id}>
                             <TableCell>{index + 1}</TableCell>
-                            <TableCell className="w-[10rem]">
+                            <TableCell>
                                 <img
                                     src={
-                                        window.location.origin +
-                                        "/" +
-                                        event.image_url
+                                        event.images_server[0]?.file_path
+                                            ? `${window.location.origin}/${event.images_server[0].file_path}`
+                                            : "https://fakeimg.pl/800x450"
                                     }
                                     alt="event image"
-                                    className="rounded-md w-[10rem] aspect-video object-contain bg-slate-400/40"
+                                    className="object-contain w-[10rem] rounded-md aspect-video bg-slate-400/40"
                                 />
                             </TableCell>
                             <TableCell className="w-[20%]">
@@ -129,9 +129,6 @@ const EventPage = ({
                                 >
                                     Delete
                                 </Button>
-                                <button className="p-1">
-                                    <EllipsisVertical size={22} />
-                                </button>
                             </TableCell>
                         </TableRow>
                     ))}

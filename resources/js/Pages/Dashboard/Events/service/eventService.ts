@@ -19,21 +19,35 @@ export function createEvent(payload: Record<string, any>) {
         },
         onSuccess: () => {
             toast.success("Event created successfully");
+            router.reload({});
         },
     });
 }
 
 export function updateEvent(eventId: number, payload: Record<string, any>) {
-    router.patch(
+    router.post(
         route("dashboard.event.update", eventId),
-        { _method: "put", ...payload },
+        { _method: "patch", ...payload },
         {
             onError: () => {
                 toast.error("Failed to update event");
             },
             onSuccess: () => {
                 toast.success("Event updated successfully");
+                router.visit(route("dashboard.event.edit", eventId));
             },
         }
     );
+}
+
+export function deleteImagebyId(imageId: number) {
+    router.delete(route("dashboard.event.deleteImage", { image: imageId }), {
+        onError: () => {
+            toast.error("Failed to delete image");
+        },
+        onSuccess: () => {
+            toast.success("Image deleted successfully");
+            router.reload({});
+        },
+    });
 }

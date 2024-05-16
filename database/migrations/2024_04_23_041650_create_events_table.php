@@ -19,7 +19,6 @@ return new class extends Migration
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->string('location', 255);
-            $table->text('image_url');
             $table->integer('max_participants');
             $table->enum('status', ['pending', 'declined', 'accepted'])->default('pending');
             $table->boolean('is_available')->default(false);
