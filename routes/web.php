@@ -4,10 +4,9 @@ use App\Http\Controllers\Dashboard\DashboardEventController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\TicketTypeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', [EventController::class, 'index'])->name('index');
 
@@ -41,13 +40,10 @@ Route::prefix('dashboard')->middleware(['auth', 'role:event-organizer|admin'])->
         Route::delete('/image/{image}', [DashboardEventController::class, 'deleteImage'])->name('deleteImage');
     });
     Route::prefix('ticket')->name('ticket.')->group(function () {
-        Route::get('/', [DashboardEventController::class, 'tickets'])->name('index');
-        Route::get('/{ticket}', [DashboardEventController::class, 'showTicket'])->name('show');
-        Route::get('/{ticket}/edit', [DashboardEventController::class, 'editTicket'])->name('edit');
-        Route::patch('/{ticket}', [DashboardEventController::class, 'updateTicket'])->name('update');
-        Route::delete('/{ticket}', [DashboardEventController::class, 'destroyTicket'])->name('destroy');
-        Route::get('/create', [DashboardEventController::class, 'createTicket'])->name('create');
-        Route::post('/', [DashboardEventController::class, 'storeTicket'])->name('store');
+
+        Route::put('/{ticketType}', [TicketTypeController::class, 'update'])->name('update');
+        Route::delete('/{ticketType}', [TicketTypeController::class, 'destroy'])->name('destroy');
+        Route::post('/', [TicketTypeController::class, 'store'])->name('store');
     });
 
     Route::prefix('orders')->name('orders.')->group(function () {

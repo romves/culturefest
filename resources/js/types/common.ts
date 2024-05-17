@@ -24,6 +24,7 @@ export interface Category {
 export interface TicketType {
     id: number;
     name: string;
+    max_tickets: number;
     price: number;
 }
 

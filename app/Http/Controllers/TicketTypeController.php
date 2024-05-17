@@ -28,14 +28,31 @@ class TicketTypeController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'price' => 'required|numeric',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string',
+                'price' => 'required|numeric',
+                'max_tickets' => 'required|numeric',
+            ]);
 
-        $ticketType = TicketType::create($request->all());
+            $ticketType = new TicketType();
 
-        return response()->json($ticketType, 201);
+            $ticketType->name = $request->name;
+            $ticketType->price = $request->price;
+            $ticketType->max_tickets = $request->max_tickets;
+
+            $ticketType->event_id = $request->event_id;
+
+            $ticketType->save();
+
+            // dd($ticketType->toArray());
+
+            // return response()->json($ticketType, 201);
+            return redirect()->back()->withSuccess('Ticket created successfully');
+        } catch (\Exception $e) {
+            // return response()->json($e->getMessage(), 500);
+            return redirect()->back()->withError($e->getMessage());
+        }
     }
 
     /**
@@ -57,9 +74,29 @@ class TicketTypeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, TicketType $ticketType)
     {
-        //
+        try {
+            $request->validate([
+                'name' => 'required|string',
+                'price' => 'required|numeric',
+                'max_tickets' => 'required|numeric',
+            ]);
+
+            $ticketType->name = $request->name;
+            $ticketType->price = $request->price;
+            $ticketType->max_tickets = $request->max_tickets;
+
+            $ticketType->event_id = $ticketType->event_id;
+
+
+            $ticketType->save();
+
+            return redirect()->back()->withSuccess('Ticket updated successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->withError($e->getMessage());
+        }
+
     }
 
     /**
@@ -67,8 +104,17 @@ class TicketTypeController extends Controller
      */
     public function destroy(TicketType $ticketType)
     {
-        $ticketType->delete();
+        try {
+            if (!$ticketType) {
+                return response()->json('Ticket type not found', 404);
+            }
 
-        return response()->json(null, 204);
+            $ticketType->delete();
+
+            // return response()->json('Ticket delete success', 204);
+            return redirect()->back()->withSuccess('Ticket delete successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->withError($e->getMessage());
+        }
     }
 }

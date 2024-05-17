@@ -17,9 +17,8 @@ import { deleteEvent } from "./service/eventService";
 import { Link } from "@inertiajs/react";
 
 const EventPage = ({
-    user,
     events,
-}: PageProps<{ user: User; events: Event[] }>) => {
+}: PageProps<{ events: Event[] }>) => {
     console.log(events);
 
     return (
@@ -48,7 +47,7 @@ const EventPage = ({
                         <TableHead>Event Schedule</TableHead>
                         <TableHead>Capacity</TableHead>
                         <TableHead>Available</TableHead>
-                        <TableHead>Seated</TableHead>
+                        {/* <TableHead>Seated</TableHead> */}
                         <TableHead>Status</TableHead>
                         <TableHead>Action</TableHead>
                     </TableRow>
@@ -92,7 +91,7 @@ const EventPage = ({
                                     />
                                 )}
                             </TableCell>
-                            <TableCell>
+                            {/* <TableCell>
                                 {event.is_seated == 1 ? (
                                     <CircleCheck
                                         size={18}
@@ -104,7 +103,7 @@ const EventPage = ({
                                         className="text-red-400"
                                     />
                                 )}
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell>
                                 <Chip
                                     variant={`${event.status.toLowerCase()}`}

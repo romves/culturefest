@@ -1,5 +1,5 @@
 import TextInput from "@/Components/TextInput";
-import { Button } from "@/Components/ui/button";
+import { Button, buttonVariants } from "@/Components/ui/button";
 import {
     Table,
     TableBody,
@@ -8,7 +8,7 @@ import {
     TableRow,
 } from "@/Components/ui/table";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { numberFormat } from "@/lib/utils";
+import { cn, numberFormat } from "@/lib/utils";
 import { Category, Event } from "@/types/common";
 import { router, useForm } from "@inertiajs/react";
 import { EllipsisVertical, X } from "lucide-react";
@@ -20,6 +20,13 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/Components/ui/popover";
+import MultiSelect from "@/Components/MultiSelect";
+import FormSection from "@/Components/features/dashboard/FormSection";
+import FileInputPreview from "@/Components/FileInputPreview";
+import { create } from "domain";
+import { createPortal } from "react-dom";
+import Dialog from "@/Components/Dialog";
+import { toast } from "react-toastify";
 
 const Edit = ({
     event,
@@ -28,6 +35,12 @@ const Edit = ({
     event: Event;
     event_categories: Category[];
 }) => {
+    const [isOpened, setIsOpened] = useState({
+        addTicket: false,
+        editTicket: false,
+        selectedTicket: undefined as number | undefined,
+    });
+
     const { data, setData, errors } = useForm<IFormData>({
         name: event.name ?? "",
         description: event.description ?? "",
@@ -46,6 +59,13 @@ const Edit = ({
         setData(e.target.name as any, e.target.value);
     }
 
+    const allTicketTypeMaxParticipantCount = event.ticket_types.reduce(
+        (acc, ticket) => acc + ticket.max_tickets,
+        0
+    );
+
+    console.log(event);
+
     return (
         <AuthenticatedLayout
             header={
@@ -56,6 +76,41 @@ const Edit = ({
                 </div>
             }
         >
+            {createPortal(
+                <>
+                    <EditTicketDialog
+                        maxCount={
+                            event.max_participants -
+                            allTicketTypeMaxParticipantCount
+                        }
+                        event={event}
+                        isOpen={isOpened.editTicket}
+                        onClose={() =>
+                            setIsOpened({
+                                ...isOpened,
+                                editTicket: !isOpened.editTicket,
+                            })
+                        }
+                        selectedId={isOpened.selectedTicket}
+                    />
+                    <CreateTicketDialog
+                        maxCount={
+                            event.max_participants -
+                            allTicketTypeMaxParticipantCount
+                        }
+                        event={event}
+                        isOpen={isOpened.addTicket}
+                        onClose={() =>
+                            setIsOpened({
+                                ...isOpened,
+                                addTicket: !isOpened.addTicket,
+                            })
+                        }
+                    />
+                </>,
+                document.getElementById("modal-root") as Element
+            )}
+
             <div className="container grid grid-cols-2 gap-4 py-8">
                 <FormSection title="Event Details">
                     <form
@@ -131,47 +186,67 @@ const Edit = ({
                             onChange={onChange}
                         />
 
-                        <input
-                            name="images"
-                            type="file"
-                            accept="image/*"
-                            multiple
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                setData("images", e.target.files);
-                            }}
-                        />
+                        <div className="flex items-center gap-2 ">
+                            <input
+                                name="images"
+                                id="images"
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                multiple
+                                onChange={(
+                                    e: ChangeEvent<HTMLInputElement>
+                                ) => {
+                                    setData("images", e.target.files);
+                                }}
+                            />
+                            <label
+                                htmlFor="images"
+                                className={cn(
+                                    buttonVariants({
+                                        size: "sm",
+                                    }),
+                                    "w-fit"
+                                )}
+                            >
+                                Upload Image
+                            </label>
+                        </div>
 
-                        <div className="flex gap-4">
-                            {data.images_server?.map((image: any) => (
-                                <div className="relative group">
-                                    <img
-                                        key={image.id}
-                                        src={
-                                            window.location.origin +
-                                            "/" +
-                                            image.file_path
-                                        }
-                                        alt="event image"
-                                        className="rounded-md w-[10rem] aspect-video object-contain bg-slate-400/40"
-                                    />
-
-                                    <button
-                                        type="button"
-                                        className="absolute transition-all opacity-0 top-1 right-1 group-hover:opacity-100"
-                                        onClick={() => {
-                                            deleteImagebyId(image.id);
+                        <div className="flex gap-4 mb-2">
+                            {(data.images != null
+                                ? Array.from(data.images)
+                                : []
+                            ).map((image: any) => {
+                                return (
+                                    <FileInputPreview
+                                        src={URL.createObjectURL(image)}
+                                        deleteHandler={() => {
                                             setData(
-                                                "images_server",
-                                                data.images_server?.filter(
+                                                "images",
+                                                Array.from(data.images).filter(
                                                     (img: any) =>
-                                                        img.id !== image.id
+                                                        img.name !== image.name
                                                 )
                                             );
                                         }}
-                                    >
-                                        <X size={20} />
-                                    </button>
-                                </div>
+                                    />
+                                );
+                            })}
+                            {data.images_server?.map((image: any) => (
+                                <FileInputPreview
+                                    src={"/" + image.file_path}
+                                    deleteHandler={() => {
+                                        deleteImagebyId(image.id);
+                                        setData(
+                                            "images_server",
+                                            data.images_server?.filter(
+                                                (img: any) =>
+                                                    img.id !== image.id
+                                            )
+                                        );
+                                    }}
+                                />
                             ))}
                         </div>
 
@@ -217,24 +292,36 @@ const Edit = ({
                         title="Ticket Type"
                         action={
                             <Button
+                                disabled={
+                                    event.max_participants ===
+                                    allTicketTypeMaxParticipantCount
+                                }
                                 size="sm"
                                 onClick={() =>
-                                    router.visit(
-                                        route(
-                                            "dashboard.ticket.create",
-                                            event.id
-                                        )
-                                    )
+                                    setIsOpened({
+                                        ...isOpened,
+                                        addTicket: !isOpened.addTicket,
+                                    })
                                 }
                             >
                                 Add
                             </Button>
                         }
                     >
+                        {event.max_participants -
+                            allTicketTypeMaxParticipantCount >
+                            0 && (
+                            <div className="px-2 py-1 my-2 text-sm font-medium text-red-400 rounded-md bg-red-50 w-fit">
+                                {event.max_participants -
+                                    allTicketTypeMaxParticipantCount}{" "}
+                                tickets is unassigned
+                            </div>
+                        )}
                         <Table>
                             <TableHeader>
                                 <TableRow>
                                     <TableCell>Name</TableCell>
+                                    <TableCell>Max Ticket</TableCell>
                                     <TableCell>Price</TableCell>
                                     <TableCell>Action</TableCell>
                                 </TableRow>
@@ -242,14 +329,20 @@ const Edit = ({
 
                             <TableBody>
                                 {event.ticket_types.map((ticket) => (
-                                    <TableRow key={ticket.id}>
-                                        <TableCell className="font-medium">
+                                    <TableRow
+                                        key={ticket.id}
+                                        className="font-medium"
+                                    >
+                                        <TableCell className="">
                                             {ticket.name}
                                         </TableCell>
-                                        <TableCell className="w-[10%] text-sm font-medium">
+                                        <TableCell className="">
+                                            {ticket.max_tickets}
+                                        </TableCell>
+                                        <TableCell className="w-[10%] text-sm ">
                                             {numberFormat(ticket.price)}
                                         </TableCell>
-                                        <TableCell className="w-[10%] text-sm font-medium">
+                                        <TableCell className="w-[10%] text-sm ">
                                             <Popover>
                                                 <PopoverTrigger>
                                                     <EllipsisVertical
@@ -261,6 +354,15 @@ const Edit = ({
                                                         <Button
                                                             size="sm"
                                                             variant="ghost"
+                                                            onClick={() =>
+                                                                setIsOpened({
+                                                                    ...isOpened,
+                                                                    editTicket:
+                                                                        !isOpened.editTicket,
+                                                                    selectedTicket:
+                                                                        ticket.id,
+                                                                })
+                                                            }
                                                         >
                                                             Edit
                                                         </Button>
@@ -268,6 +370,21 @@ const Edit = ({
                                                             size="sm"
                                                             variant="ghost"
                                                             className="text-red-500 hover:text-red-600"
+                                                            onClick={() =>
+                                                                router.delete(
+                                                                    route(
+                                                                        "dashboard.ticket.destroy",
+                                                                        ticket.id
+                                                                    ),
+                                                                    {
+                                                                        onSuccess:
+                                                                            () =>
+                                                                                toast.success(
+                                                                                    "Ticket deleted successfully"
+                                                                                ),
+                                                                    }
+                                                                )
+                                                            }
                                                         >
                                                             Delete
                                                         </Button>
@@ -288,103 +405,155 @@ const Edit = ({
 
 export default Edit;
 
-const FormSection = ({
-    title,
-    children,
-    action,
-}: PropsWithChildren<{ title: string; action?: ReactNode }>) => {
-    return (
-        <div className="p-4 bg-white rounded-xl">
-            <div className="flex justify-between">
-                <h2 className="mb-6 text-lg font-semibold">{title}</h2>
-                {action}
-            </div>
-            {children}
-        </div>
-    );
-};
+interface TicketDialogProps {
+    isOpen: boolean;
+    onClose: () => void;
+    maxCount: number;
+    event: Event;
+    selectedId?: number;
+}
 
-interface Option {
-    id: number;
+interface ICreateTicketForm extends Record<string, any> {
     name: string;
+    price: number | string;
+    max_tickets: number | string;
 }
 
-interface MultiSelectProps {
-    options: Option[];
-    selectedOptions: Option[];
-    onChange: (selected: Option) => void;
-}
-
-const MultiSelect = <T,>({
-    options,
-    selectedOptions,
-    onChange,
-}: MultiSelectProps) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const toggleDropdown = () => setIsOpen(!isOpen);
-    const handleOptionClick = (option: Option) => {
-        onChange(option);
-    };
+function CreateTicketDialog({
+    isOpen,
+    onClose,
+    maxCount,
+    event,
+}: TicketDialogProps) {
+    const { data, setData, errors, post, transform } =
+        useForm<ICreateTicketForm>({
+            name: "",
+            price: "",
+            max_tickets: "",
+        });
 
     return (
-        <div className="relative w-full">
-            <div
-                className="flex items-center justify-between p-2 border border-gray-300 rounded-md cursor-pointer"
-                onClick={toggleDropdown}
+        <Dialog title="Create Event" isOpen={isOpen} onClose={onClose}>
+            <form
+                className="mt-4 space-y-2"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    transform((data) => {
+                        return {
+                            ...data,
+                            max_tickets: Number(data.max_tickets),
+                            event_id: event.id,
+                        };
+                    });
+
+                    post(route("dashboard.ticket.store"), {
+                        onSuccess: () => {
+                            toast.success("Ticket created successfully");
+                            onClose();
+                        },
+                    });
+                }}
             >
-                <div className="flex flex-wrap">
-                    {selectedOptions.length === 0 ? (
-                        <span className="text-gray-500">Select options</span>
-                    ) : (
-                        selectedOptions.map((option) => (
-                            <span
-                                key={option.id}
-                                className="px-2 py-1 m-1 text-sm text-white rounded bg-primary"
-                            >
-                                {option.name}
-                            </span>
-                        ))
-                    )}
-                </div>
-                <div>
-                    <svg
-                        className={`w-5 h-5 transition-transform transform ${
-                            isOpen ? "rotate-180" : ""
-                        }`}
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M19 9l-7 7-7-7"
-                        />
-                    </svg>
-                </div>
-            </div>
-            {isOpen && (
-                <div className="absolute z-10 w-full mt-1 overflow-auto bg-white border border-gray-300 rounded max-h-60">
-                    {options.map((option) => (
-                        <div
-                            key={option.id}
-                            className={`p-2 cursor-pointer hover:bg-gray-100 ${
-                                selectedOptions.some(
-                                    (category: Category) =>
-                                        category.id === option.id
-                                )
-                                    ? "bg-gray-200"
-                                    : ""
-                            }`}
-                            onClick={() => handleOptionClick(option)}
-                        >
-                            {option.name}
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
+                <TextInput
+                    label="Name"
+                    name="name"
+                    id="name"
+                    value={data.name}
+                    onChange={(e) => setData("name", e.target.value)}
+                />
+                <TextInput
+                    label="Max Ticket"
+                    name="max_tickets"
+                    id="max_tickets"
+                    type="number"
+                    min={0}
+                    max={maxCount}
+                    onChange={(e) => {
+                        setData("max_tickets", e.target.value);
+                    }}
+                />
+                <TextInput
+                    label="Price"
+                    name="price"
+                    id="price"
+                    type="number"
+                    value={data.price}
+                    onChange={(e) => setData("price", Number(e.target.value))}
+                />
+                <Button className="" type="submit">
+                    Create
+                </Button>
+            </form>
+        </Dialog>
     );
-};
+}
+
+function EditTicketDialog({
+    isOpen,
+    onClose,
+    maxCount,
+    selectedId,
+    event,
+}: TicketDialogProps) {
+    const selectedEvent = event.ticket_types.find(
+        (ticket) => ticket.id === selectedId
+    );
+
+    if (!selectedEvent) {
+        return null;
+    }
+
+    const { data, setData, put, transform } = useForm<ICreateTicketForm>({
+        name: selectedEvent.name,
+        price: selectedEvent.price,
+        max_tickets: selectedEvent.max_tickets,
+    });
+
+    return (
+        <Dialog title="Edit Event" isOpen={isOpen} onClose={onClose}>
+            <form
+                className="mt-4 space-y-2"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    transform((data) => {
+                        return {
+                            ...data,
+                            max_tickets: Number(data.max_tickets),
+                            event_id: selectedEvent.id,
+                        };
+                    });
+
+                    put(route("dashboard.ticket.update", selectedEvent.id), {
+                        onSuccess: () => {
+                            toast.success("Ticket updated successfully");
+                            onClose();
+                        },
+                    });
+                }}
+            >
+                <TextInput
+                    label="Name"
+                    value={data.name}
+                    onChange={(e) => setData("name", e.target.value)}
+                />
+                <TextInput
+                    label="Max Ticket"
+                    type="number"
+                    min={0}
+                    max={maxCount + Number(data.max_tickets)}
+                    value={data.max_tickets}
+                    onChange={(e) => {
+                        setData("max_tickets", e.target.value);
+                    }}
+                />
+                <TextInput
+                    label="Price"
+                    type="number"
+                    value={data.price}
+                    onChange={(e) => setData("price", Number(e.target.value))}
+                />
+                <Button type="submit">Update</Button>
+            </form>
+        </Dialog>
+    );
+}
