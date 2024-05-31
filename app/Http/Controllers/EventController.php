@@ -19,12 +19,26 @@ class EventController extends Controller
      */
     public function index()
     {
-        $events = Event::with('categories')->get();
+        // get event with status accepted
+        $events = Event::where('status', 'accepted')->with('categories', 'images_server')->get();
+
+        // $events = Event::with('categories', 'images_server')->get();
 
         return Inertia::render('Events/Index', [
             'events' => $events,
         ]);
     }
+
+    public function orderTicket(Request $request, string $event_slug)
+    {
+        // get event from slug
+        $event = Event::with('categories', 'images_server', 'ticketTypes')->where('slug', $event_slug)->first();
+
+        return Inertia::render('Events/Slug/Order/Index', [
+            'event' => $event,
+        ]);
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -39,7 +53,7 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-      //
+        //
     }
 
     /**
@@ -47,7 +61,8 @@ class EventController extends Controller
      */
     public function show(string $slug)
     {
-        $event = Event::where('slug', $slug)->first();
+        // $event = Event::where('slug', $slug)->first();
+        $event = Event::where('slug', $slug)->with('categories', 'images_server', 'ticketTypes')->first();
 
         // return response()->json($event);
         return Inertia::render('Events/Slug/Index', [

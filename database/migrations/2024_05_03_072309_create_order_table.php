@@ -17,8 +17,10 @@ return new class extends Migration
             $table->string('payment_method');
             $table->string('total_price');
             $table->string('order_code')->unique();
+            $table->longText('payload')->nullable();
 
             $table->foreignUlid('user_id')->constrained();
+            $table->foreignId('event_id')->constrained();
             $table->timestamps();
         });
     }

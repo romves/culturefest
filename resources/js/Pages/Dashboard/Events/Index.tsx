@@ -38,7 +38,7 @@ const EventPage = ({
                 </div>
             }
         >
-            <Table className="container w-full h-screen my-10 bg-white">
+            <Table className="container w-full my-10 bg-white">
                 <TableHeader>
                     <TableRow>
                         <TableHead></TableHead>
@@ -106,7 +106,6 @@ const EventPage = ({
                             </TableCell> */}
                             <TableCell>
                                 <Chip
-                                    variant={`${event.status.toLowerCase()}`}
                                     text={event.status}
                                 />
                             </TableCell>

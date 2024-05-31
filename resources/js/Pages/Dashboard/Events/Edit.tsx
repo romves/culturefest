@@ -1,5 +1,14 @@
+import Dialog from "@/Components/Dialog";
+import FileInputPreview from "@/Components/FileInputPreview";
+import MultiSelect from "@/Components/MultiSelect";
 import TextInput from "@/Components/TextInput";
+import FormSection from "@/Components/features/dashboard/FormSection";
 import { Button, buttonVariants } from "@/Components/ui/button";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/Components/ui/popover";
 import {
     Table,
     TableBody,
@@ -11,22 +20,14 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { cn, numberFormat } from "@/lib/utils";
 import { Category, Event } from "@/types/common";
 import { router, useForm } from "@inertiajs/react";
-import { EllipsisVertical, X } from "lucide-react";
-import { ChangeEvent, PropsWithChildren, ReactNode, useState } from "react";
+import { EllipsisVertical } from "lucide-react";
+import { ChangeEvent, useState } from "react";
+import { createPortal } from "react-dom";
+import { toast } from "react-toastify";
 import { deleteImagebyId, updateEvent } from "./service/eventService";
 import { IFormData } from "./types";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/Components/ui/popover";
-import MultiSelect from "@/Components/MultiSelect";
-import FormSection from "@/Components/features/dashboard/FormSection";
-import FileInputPreview from "@/Components/FileInputPreview";
-import { create } from "domain";
-import { createPortal } from "react-dom";
-import Dialog from "@/Components/Dialog";
-import { toast } from "react-toastify";
+import EditTicketDialog from "./components/EditTicketDialog";
+import CreateTicketDialog from "./components/CreateTicketDialog";
 
 const Edit = ({
     event,
@@ -63,8 +64,6 @@ const Edit = ({
         (acc, ticket) => acc + ticket.max_tickets,
         0
     );
-
-    console.log(event);
 
     return (
         <AuthenticatedLayout
@@ -405,7 +404,7 @@ const Edit = ({
 
 export default Edit;
 
-interface TicketDialogProps {
+export interface TicketDialogProps {
     isOpen: boolean;
     onClose: () => void;
     maxCount: number;
@@ -413,147 +412,9 @@ interface TicketDialogProps {
     selectedId?: number;
 }
 
-interface ICreateTicketForm extends Record<string, any> {
+export interface ICreateTicketForm extends Record<string, any> {
     name: string;
     price: number | string;
     max_tickets: number | string;
 }
 
-function CreateTicketDialog({
-    isOpen,
-    onClose,
-    maxCount,
-    event,
-}: TicketDialogProps) {
-    const { data, setData, errors, post, transform } =
-        useForm<ICreateTicketForm>({
-            name: "",
-            price: "",
-            max_tickets: "",
-        });
-
-    return (
-        <Dialog title="Create Event" isOpen={isOpen} onClose={onClose}>
-            <form
-                className="mt-4 space-y-2"
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    transform((data) => {
-                        return {
-                            ...data,
-                            max_tickets: Number(data.max_tickets),
-                            event_id: event.id,
-                        };
-                    });
-
-                    post(route("dashboard.ticket.store"), {
-                        onSuccess: () => {
-                            toast.success("Ticket created successfully");
-                            onClose();
-                        },
-                    });
-                }}
-            >
-                <TextInput
-                    label="Name"
-                    name="name"
-                    id="name"
-                    value={data.name}
-                    onChange={(e) => setData("name", e.target.value)}
-                />
-                <TextInput
-                    label="Max Ticket"
-                    name="max_tickets"
-                    id="max_tickets"
-                    type="number"
-                    min={0}
-                    max={maxCount}
-                    onChange={(e) => {
-                        setData("max_tickets", e.target.value);
-                    }}
-                />
-                <TextInput
-                    label="Price"
-                    name="price"
-                    id="price"
-                    type="number"
-                    value={data.price}
-                    onChange={(e) => setData("price", Number(e.target.value))}
-                />
-                <Button className="" type="submit">
-                    Create
-                </Button>
-            </form>
-        </Dialog>
-    );
-}
-
-function EditTicketDialog({
-    isOpen,
-    onClose,
-    maxCount,
-    selectedId,
-    event,
-}: TicketDialogProps) {
-    const selectedEvent = event.ticket_types.find(
-        (ticket) => ticket.id === selectedId
-    );
-
-    if (!selectedEvent) {
-        return null;
-    }
-
-    const { data, setData, put, transform } = useForm<ICreateTicketForm>({
-        name: selectedEvent.name,
-        price: selectedEvent.price,
-        max_tickets: selectedEvent.max_tickets,
-    });
-
-    return (
-        <Dialog title="Edit Event" isOpen={isOpen} onClose={onClose}>
-            <form
-                className="mt-4 space-y-2"
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    transform((data) => {
-                        return {
-                            ...data,
-                            max_tickets: Number(data.max_tickets),
-                            event_id: selectedEvent.id,
-                        };
-                    });
-
-                    put(route("dashboard.ticket.update", selectedEvent.id), {
-                        onSuccess: () => {
-                            toast.success("Ticket updated successfully");
-                            onClose();
-                        },
-                    });
-                }}
-            >
-                <TextInput
-                    label="Name"
-                    value={data.name}
-                    onChange={(e) => setData("name", e.target.value)}
-                />
-                <TextInput
-                    label="Max Ticket"
-                    type="number"
-                    min={0}
-                    max={maxCount + Number(data.max_tickets)}
-                    value={data.max_tickets}
-                    onChange={(e) => {
-                        setData("max_tickets", e.target.value);
-                    }}
-                />
-                <TextInput
-                    label="Price"
-                    type="number"
-                    value={data.price}
-                    onChange={(e) => setData("price", Number(e.target.value))}
-                />
-                <Button type="submit">Update</Button>
-            </form>
-        </Dialog>
-    );
-}

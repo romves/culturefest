@@ -4,31 +4,59 @@ import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link, usePage } from "@inertiajs/react";
-import { User } from "@/types";
+import { Role, User } from "@/types";
 
-const links = [
-    {
-        href: route("dashboard.index"),
-        active: route().current("dashboard.index"),
-        text: "Dashboard",
-    },
-    {
-        href: route("dashboard.event.index"),
-        active: route().current("dashboard.event.index"),
-        text: "Event",
-    },
-    {
-        href: route("dashboard.orders.index"),
-        active: route().current("dashboard.order.index"),
-        text: "Order",
-    },
-];
+interface RoleAccess {
+    admin: {
+        href: string;
+        active: boolean;
+        text: string;
+    }[];
+    organizer: {
+        href: string;
+        active: boolean;
+        text: string;
+    }[];
+}
 
 export default function Authenticated({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
-    const user = usePage().props.user as User;
+    const { user } = usePage().props.auth as { user: User };
+    const role =
+        user?.roles?.[0]?.name ?? ("user" as "admin" | "event-organizer" | "user");
+
+    const roleAccess = {
+        admin: [
+            {
+                href: route("dashboard.admin.user-management.index"),
+                active: route().current(
+                    "dashboard.admin.user-management.index"
+                ),
+                text: "User Management",
+            },
+            {
+                href: route("dashboard.admin.event-management.index"),
+                active: route().current(
+                    "dashboard.admin.event-management.index"
+                ),
+                text: "Event Management",
+            },
+        ],
+        'event-organizer': [
+            {
+                href: route("dashboard.event.index"),
+                active: route().current("dashboard.event.index"),
+                text: "Event",
+            },
+            {
+                href: route("dashboard.orders.index"),
+                active: route().current("dashboard.orders.index"),
+                text: "Recent Order",
+            },
+        ],
+    };
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -46,7 +74,9 @@ export default function Authenticated({
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                {links.map((link) => (
+                                {(
+                                    roleAccess[role as keyof typeof roleAccess] ?? []
+                                ).map((link: any) => (
                                     <NavLink
                                         key={link.href}
                                         href={link.href}
@@ -55,7 +85,7 @@ export default function Authenticated({
                                         {link.text}
                                     </NavLink>
                                 ))}
-                               
+
                                 {/* <NavLink href={route('dashboard.index')} active={route().current('dashboard.index')}>
                                     Dashboard
                                 </NavLink> */}

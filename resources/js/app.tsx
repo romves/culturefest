@@ -11,16 +11,16 @@ const appName = import.meta.env.VITE_APP_NAME || "Laravel";
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => {
-        const pages = import.meta.glob("./Pages/**/*.tsx", { eager: true });
-        let page = pages[`./Pages/${name}.tsx`] as any;
-        page.default.layout =
-            page.default.layout ||
-            ((page: any) => <MainLayout children={page} />);
+        const page = resolvePageComponent(
+            `./Pages/${name}.tsx`,
+            import.meta.glob("./Pages/**/*.tsx")
+        );
 
-        // resolvePageComponent(
-        //     `./Pages/${name}.tsx`,
-        //     import.meta.glob("./Pages/**/*.tsx")
-        // );
+        page.then((res: any) => {
+            res.default.layout =
+                res.default.layout ||
+                ((page: any) => <MainLayout children={page} />);
+        });
 
         return page;
     },

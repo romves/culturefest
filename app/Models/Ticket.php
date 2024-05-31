@@ -25,8 +25,13 @@ class Ticket extends Model
         return $this->belongsTo(Order::class);
     }
 
+    public function ticketType()
+    {
+        return $this->belongsTo(TicketType::class);
+    }
+
     public static function generateTicketCode()
     {
-        return 'TICKET-' . uniqid();
+        return 'TICKET-' . uniqid().strtoupper(substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 3));
     }
 }

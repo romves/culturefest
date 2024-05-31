@@ -52,4 +52,8 @@ class Event extends Model
         return $this->hasMany(UploadedFile::class, 'event_id');
     }
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

@@ -11,20 +11,40 @@ module.exports = {
     theme: {
         container: {
             center: true,
-            padding: "1.5rem",
+            padding: "2rem",
             screens: {
-                "2xl": "1400px",
+                sm: "100%",
+                md: "100%",
+                lg: "100%",
+                // xl: "1280px",
+                "2xl": "1920px",
             },
         },
         extend: {
+            blur: {
+                xs: "2px",
+                'full': "120px",
+            },
             colors: {
+                orange: {
+                    100: "#ffdbce",
+                    200: "#ffb89c",
+                    300: "#ff946b",
+                    400: "#ff7139",
+                    500: "#ff4d08",
+                    600: "#cc3e06",
+                    700: "#992e05",
+                    800: "#661f03",
+                    900: "#330f02",
+                },
+                "footer-bg": "#1D1A1B",
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
-                ring: "hsl(var(--ring))",
+                ring: "#ff4d08",
                 background: "hsl(var(--background))",
                 foreground: "hsl(var(--foreground))",
                 primary: {
-                    DEFAULT: "hsl(var(--primary))",
+                    DEFAULT: "#ff4d08",
                     foreground: "hsl(var(--primary-foreground))",
                 },
                 secondary: {
@@ -70,6 +90,10 @@ module.exports = {
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
+            },
+            fontFamily: {
+                jakarta: ["Plus Jakarta Sans", "sans-serif"],
+                neue: ["Neue Haas Grotesk Display Pro", "sans-serif"],
             },
         },
     },

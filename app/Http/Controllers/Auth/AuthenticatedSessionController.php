@@ -33,7 +33,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard.index', absolute: false));
+        $user = Auth::user();
+
+        $route = $user->hasRole(['event-organizer', 'admin']) ? 'dashboard.index' : 'index';
+
+        return redirect(route($route, absolute: false));
     }
 
     /**

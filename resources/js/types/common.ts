@@ -1,3 +1,5 @@
+import { User } from ".";
+
 export interface Event {
     id: number;
     name: string;
@@ -14,6 +16,7 @@ export interface Event {
     images: FileList | null;
     ticket_types: TicketType[];
     images_server: ServerImage[];
+    user: User;
 }
 
 export interface Category {

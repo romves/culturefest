@@ -49,6 +49,8 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        $route = $user->hasRole(['event-organizer', 'admin']) ? 'dashboard.index' : 'i';
+
+        return redirect(route($route, absolute: false));
     }
 }

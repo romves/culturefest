@@ -32,7 +32,10 @@ class DashboardEventController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Dashboard/Events/Create');
+        $categories = EventCategory::all();
+        return Inertia::render('Dashboard/Events/Create', [
+            'event_categories' => $categories,
+        ]);
     }
 
     /**
@@ -74,6 +77,7 @@ class DashboardEventController extends Controller
             foreach ($request->images as $image) {
                 $fileName = hash('sha256', $image->getClientOriginalName()) . '-' . time() . '.' . $image->getClientOriginalExtension();
                 $filePath = $image->storeAs('events/' . $event->id . '/images', $fileName);
+                // $filePath = Storage::putFileAs('events/' . $event->id . '/images', $fileName);
 
                 $file = new UploadedFile();
 
@@ -138,6 +142,7 @@ class DashboardEventController extends Controller
                 foreach ($request->images as $image) {
                     $fileName = hash('sha256', $image->getClientOriginalName()) . '-' . time() . '.' . $image->getClientOriginalExtension();
                     $filePath = $image->storeAs('events/' . $event->id . '/images', $fileName);
+                    // $filePath = Storage::putFileAs('events/' . $event->id . '/images', $fileName);
 
                     $file = new UploadedFile();
 
@@ -197,5 +202,13 @@ class DashboardEventController extends Controller
             DB::rollBack();
             return redirect()->back()->with('message', 'An error occurred while deleting the image.');
         }
+    }
+
+    public function verifyEvent(Event $event)
+    {
+        $event->verified = true;
+        $event->save();
+
+        return redirect()->back()->with('message', 'Event verified successfully!');
     }
 }

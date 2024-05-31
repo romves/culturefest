@@ -6,22 +6,35 @@ import {
     CardHeader,
     CardTitle,
 } from "@/Components/ui/card";
-import { formatDate } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { Event } from "@/types/common";
 import { Link } from "@inertiajs/react";
 import { MapPinned, Ticket, Users } from "lucide-react";
 import React from "react";
 
-export default function EventCard({ event }: { event: Event }) {
+export default function EventCard({
+    event,
+    className,
+}: {
+    event: Event;
+    className?: string;
+}) {
     return (
         <Card
             key={event.id}
-            className="relative w-[24rem] hover:scale-[101%] transition-all hover:shadow-md duration-300"
+            className={cn(
+                className,
+                "relative hover:scale-[101%] transition-all hover:shadow-md duration-300"
+            )}
         >
-            <Link href={`/event/${event.slug}`}>
+            <Link href={`/events/${event.slug}`}>
                 <img
-                    src="https://images.unsplash.com/photo-1714818282987-7d61de55302e?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxMnx8fGVufDB8fHx8fA%3D%3D"
-                    className="w-full rounded-t-md aspect-video"
+                    src={
+                        event?.images_server[0]?.file_path
+                            ? `/${event?.images_server[0]?.file_path}`
+                            : "https://images.unsplash.com/photo-1714818282987-7d61de55302e?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxMnx8fGVufDB8fHx8fA%3D%3D"
+                    }
+                    className="object-cover w-full rounded-t-md aspect-video"
                 />
                 <CardHeader>
                     <CardTitle>{event.name}</CardTitle>
