@@ -77,7 +77,7 @@ export default function PaymentPage({ order }: any) {
     };
 
     return (
-        <PageLayout>
+        <PageLayout navVariant="light">
             <section className="">
                 <div className="container flex h-screen ">
                     <Link href={route('recent-order')} className={buttonVariants({className: 'absolute mt-8 gap-1', variant: 'link'})} >

@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-
+        
         $user = Auth::user();
 
         $route = $user->hasRole(['event-organizer', 'admin']) ? 'dashboard.index' : 'index';

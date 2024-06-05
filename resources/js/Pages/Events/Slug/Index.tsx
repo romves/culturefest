@@ -181,7 +181,7 @@ const TicketSlider = ({
             <div className="absolute w-full h-screen bg-[#0F0F0F] -z-20 top-0 left-0" />
             <div className="flex flex-col justify-between md:w-[40%] gap-8 mt-auto text-white">
                 <div className="flex gap-12">
-                    <div className="text-end justify-between font-neue w-[7rem] flex flex-col items-end">
+                    <div className="text-end justify-between font-neue w-[7rem] flex flex-col items-end gap-3">
                         <p>
                             {formatDate(event.start_date)} <br />-{" "}
                             {formatDate(event.start_date)}

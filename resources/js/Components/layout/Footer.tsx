@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Youtube } from "lucide-react";
+import { ArrowUpLeft, Facebook, Instagram, Youtube } from "lucide-react";
 import { ReactNode } from "react";
 
 export default function Footer() {
@@ -34,7 +34,10 @@ export default function Footer() {
                 </div>
             </div>
             <div className="flex flex-col items-end justify-between w-2/6 pb-8 text-end">
-                <div className="w-32 h-32 border rounded-full"></div>
+                <div className="flex items-center justify-center w-32 h-32 transition-all -rotate-90 border rounded-full hover:rotate-0">
+                    <ArrowUpLeft size={60} strokeWidth={1}/>
+
+                </div>
                 <p className="text-orange-500 font-neue">
                     Copyright &copy; CultureFest 2024
                 </p>

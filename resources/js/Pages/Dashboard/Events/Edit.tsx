@@ -232,8 +232,9 @@ const Edit = ({
                                     />
                                 );
                             })}
-                            {data.images_server?.map((image: any) => (
+                            {data.images_server?.map((image: any, idx: number) => (
                                 <FileInputPreview
+                                    key={idx}
                                     src={"/" + image.file_path}
                                     deleteHandler={() => {
                                         deleteImagebyId(image.id);

@@ -1,7 +1,13 @@
 import { cn } from "@/lib/utils";
 import { User as UserType } from "@/types";
 import { Link, router, usePage } from "@inertiajs/react";
-import { CreditCard, LogOut, Settings, User } from "lucide-react";
+import {
+    CreditCard,
+    LayoutDashboard,
+    LogOut,
+    Settings,
+    User,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -21,6 +27,9 @@ interface INavbarProps {
 
 export default function Navbar({ variant = "default" }: INavbarProps) {
     const { user } = usePage().props.auth as { user: UserType };
+    const role =
+        user?.roles?.[0]?.name ??
+        ("user" as "admin" | "event-organizer" | "user");
     const [isScrolled, setIsScrolled] = useState(false);
 
     useEffect(() => {
@@ -56,10 +65,10 @@ export default function Navbar({ variant = "default" }: INavbarProps) {
                         ? "  bg-neutral-300/30"
                         : "text-white bg-neutral-500/30",
                     getVariant(variant),
-                    "container grid items-center h-full grid-cols-3 my-4  rounded-full  backdrop-blur-lg transition-all"
+                    "container flex md:grid items-center h-full grid-cols-3 my-4 rounded-full backdrop-blur-lg transition-all justify-between"
                 )}
             >
-                <ul className="flex gap-4 text-lg">
+                <ul className="hidden gap-4 text-lg md:flex">
                     {Links.map((link) => (
                         <li key={link.id}>
                             <Link href={link.href}>{link.name}</Link>
@@ -67,7 +76,7 @@ export default function Navbar({ variant = "default" }: INavbarProps) {
                     ))}
                 </ul>
 
-                <Link href="/" className="flex items-center gap-3 mx-auto">
+                <Link href="/" className="flex items-center gap-3 md:mx-auto">
                     <WebLogo isScrolled={isScrolled} variant={variant} />
                     <h1 className="text-lg font-bold">CultureFest</h1>
                 </Link>
@@ -92,6 +101,16 @@ export default function Navbar({ variant = "default" }: INavbarProps) {
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuGroup>
+                                    {role == "admin" ||
+                                        (role == "event-organizer" && (
+                                            <DropdownMenuItem asChild>
+                                                <Link href="/dashboard">
+                                                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                                                    <span>Dashboard</span>
+                                                </Link>
+                                            </DropdownMenuItem>
+                                        ))}
+
                                     <DropdownMenuItem asChild>
                                         <Link href="/profile">
                                             <User className="w-4 h-4 mr-2" />
@@ -111,7 +130,7 @@ export default function Navbar({ variant = "default" }: INavbarProps) {
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
-                                    onClick={() => router.post("logout")}
+                                    onClick={() => router.post(route("logout"))}
                                 >
                                     <LogOut className="w-4 h-4 mr-2" />
                                     <span>Logout</span>

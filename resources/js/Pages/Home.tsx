@@ -33,7 +33,7 @@ export default function Home({ events }: { events: Event[] }) {
                         </h1>
 
                         <div className="flex w-[40%] justify-between font-neue">
-                            <div className="flex items-center justify-center w-32 h-32 text-black bg-orange-500 rounded-full">
+                            <div className="flex items-center justify-center w-32 h-32 text-black transition-all -rotate-90 bg-orange-500 rounded-full hover:rotate-0">
                                 <ArrowDownRight size={60} strokeWidth={0.8} />
                             </div>
 
