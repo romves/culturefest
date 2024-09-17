@@ -64,9 +64,6 @@ Route::prefix('dashboard')->middleware(['auth', 'role:event-organizer|admin'])->
     //     Route::prefix('organizer')->middleware(['auth', 'role:event-organizer'])->name('organizer.')->group(function () {
     // });
 
-
-
-
     Route::prefix('admin')->middleware(['auth', 'role:admin|'])->name('admin.')->group(function () {
         Route::prefix('user-management')->name('user-management.')->group(function () {
             Route::get('/', [DashboardAdminController::class, 'userManagement'])->name('index');

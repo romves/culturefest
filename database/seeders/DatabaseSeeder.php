@@ -20,6 +20,12 @@ class DatabaseSeeder extends Seeder
         $this->call(EventCategorySeeder::class);
         // $this->call(TicketTypeSeeder::class);
 
+        $user1 = User::factory()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+        ]);
+        $user1->assignRole('admin');
+
         $user = User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
